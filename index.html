@@ -1,0 +1,482 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Live Card Breaking Playbook</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
+<style>
+  :root {
+    --bg-primary: #0a0a0f;
+    --bg-secondary: rgba(255, 255, 255, 0.025);
+    --glass-border: rgba(255, 255, 255, 0.08);
+    --text-primary: #ffffff;
+    --text-secondary: #9ca3af;
+    --text-tertiary: #6b7280;
+    --accent-blue: #3b82f6;
+    --accent-purple: #8b5cf6;
+    --accent-pink: #ec4899;
+    --accent-green: #10b981;
+    --accent-amber: #f59e0b;
+    --font-heading: 'Outfit', sans-serif;
+    --font-body: 'Inter', sans-serif;
+  }
+  
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  
+  body {
+    font-family: var(--font-body);
+    background-color: var(--bg-primary);
+    color: var(--text-primary);
+    line-height: 1.6;
+    background-image: 
+      radial-gradient(circle at 10% 20%, rgba(59, 130, 246, 0.08), transparent 40%),
+      radial-gradient(circle at 90% 80%, rgba(139, 92, 246, 0.08), transparent 40%);
+    background-attachment: fixed;
+    min-height: 100vh;
+    padding: 3rem 1.5rem;
+  }
+  
+  .container {
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+  
+  header {
+    text-align: center;
+    margin-bottom: 4rem;
+    animation: fadeInDown 0.8s ease-out;
+  }
+  
+  .gradient-text {
+    background: linear-gradient(135deg, var(--accent-blue), var(--accent-pink));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+  
+  h1 { font-family: var(--font-heading); font-size: 3.5rem; font-weight: 700; margin-bottom: 0.5rem; letter-spacing: -0.02em; line-height: 1.1; }
+  .subtitle { color: var(--text-secondary); font-size: 1.125rem; font-weight: 400; letter-spacing: 0.05em; text-transform: uppercase; }
+  
+  .section { margin-bottom: 5rem; animation: fadeInUp 0.8s ease-out both; }
+  
+  .section-title {
+    font-family: var(--font-heading);
+    font-size: 1.75rem;
+    font-weight: 600;
+    margin-bottom: 1.5rem;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding-bottom: 0.75rem;
+    border-bottom: 1px solid var(--glass-border);
+  }
+  
+  .section-title i { color: var(--accent-purple); font-size: 1.5rem; }
+
+  .glass-card {
+    background: var(--bg-secondary);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 1px solid var(--glass-border);
+    border-radius: 16px;
+    padding: 1.75rem;
+    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), border-color 0.3s ease, box-shadow 0.3s ease;
+    height: 100%;
+  }
+  
+  .glass-card:hover {
+    transform: translateY(-4px);
+    border-color: rgba(255, 255, 255, 0.15);
+    box-shadow: 0 12px 40px -15px rgba(0,0,0,0.6);
+  }
+
+  .grid-4 { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 1.5rem; }
+  .grid-3 { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 1.5rem; }
+  .grid-2 { display: grid; grid-template-columns: repeat(auto-fit, minmax(450px, 1fr)); gap: 2rem; }
+
+  .metric-card { text-align: center; display: flex; flex-direction: column; justify-content: center; position: relative; overflow: hidden; }
+  .metric-hover {
+    position: absolute; top: 0; left: 0; right: 0; bottom: 0;
+    background: rgba(10, 10, 15, 0.95); backdrop-filter: blur(8px);
+    display: flex; align-items: center; justify-content: center;
+    padding: 1.25rem; text-align: center;
+    opacity: 0; transform: translateY(10px); transition: all 0.3s ease;
+    border-radius: 15px;
+  }
+  .metric-card:hover .metric-hover { opacity: 1; transform: translateY(0); }
+  .metric-hover p { color: var(--text-secondary); font-size: 0.9rem; margin: 0; line-height: 1.4; }
+  .metric-content { transition: opacity 0.3s ease; }
+  .metric-card:hover .metric-content { opacity: 0; }
+  .metric-value { font-family: var(--font-heading); font-size: 3rem; font-weight: 700; color: var(--text-primary); margin-bottom: 0.25rem; line-height: 1; }
+  .metric-label { font-size: 0.875rem; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.05em; font-weight: 500; margin-bottom: 0.5rem; }
+  .metric-sub { font-size: 0.8rem; color: var(--accent-green); display: inline-flex; align-items: center; gap: 4px; justify-content: center; }
+
+  .card-header { display: flex; align-items: center; gap: 1rem; margin-bottom: 1.25rem; }
+  .icon-box { 
+    width: 48px; height: 48px; border-radius: 12px; 
+    display: flex; align-items: center; justify-content: center; font-size: 1.5rem;
+    flex-shrink: 0;
+  }
+  .icon-blue { background: rgba(59, 130, 246, 0.15); color: var(--accent-blue); box-shadow: inset 0 0 0 1px rgba(59, 130, 246, 0.3); }
+  .icon-purple { background: rgba(139, 92, 246, 0.15); color: var(--accent-purple); box-shadow: inset 0 0 0 1px rgba(139, 92, 246, 0.3); }
+  .icon-green { background: rgba(16, 185, 129, 0.15); color: var(--accent-green); box-shadow: inset 0 0 0 1px rgba(16, 185, 129, 0.3); }
+  .icon-amber { background: rgba(245, 158, 11, 0.15); color: var(--accent-amber); box-shadow: inset 0 0 0 1px rgba(245, 158, 11, 0.3); }
+  .icon-pink { background: rgba(236, 72, 153, 0.15); color: var(--accent-pink); box-shadow: inset 0 0 0 1px rgba(236, 72, 153, 0.3); }
+  
+  h3 { font-family: var(--font-heading); font-size: 1.25rem; font-weight: 600; color: var(--text-primary); }
+  p { color: var(--text-secondary); font-size: 0.95rem; margin-bottom: 1rem; }
+  p:last-child { margin-bottom: 0; }
+  
+  ul.custom-list { list-style: none; margin-top: 1rem; }
+  ul.custom-list li {
+    position: relative; padding-left: 1.75rem; margin-bottom: 1rem; color: var(--text-secondary); font-size: 0.95rem;
+  }
+  ul.custom-list li:last-child { margin-bottom: 0; }
+  ul.custom-list li::before {
+    content: "\eb7b"; /* tabler arrow-right icon */
+    font-family: 'tabler-icons';
+    position: absolute; left: 0; top: 2px;
+    color: var(--accent-blue); font-size: 1.1rem;
+  }
+  ul.custom-list li strong { color: var(--text-primary); font-weight: 600; }
+
+  /* Funnel specific styles */
+  .funnel-container { display: flex; flex-direction: column; gap: 0.5rem; }
+  .funnel-step {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 1.25rem 1.5rem; border-radius: 12px;
+    background: rgba(255, 255, 255, 0.02);
+    border: 1px solid transparent;
+    border-left: 4px solid transparent;
+    transition: all 0.2s ease;
+  }
+  .funnel-step:hover { background: rgba(255, 255, 255, 0.05); border-color: var(--glass-border); transform: translateX(4px); }
+  .f-top { border-left-color: var(--accent-blue); }
+  .f-mid { border-left-color: var(--accent-purple); }
+  .f-conv { border-left-color: var(--accent-pink); }
+  .f-ret { border-left-color: var(--accent-amber); }
+  .f-loy { border-left-color: var(--accent-green); }
+  .funnel-content { flex: 1; }
+  .funnel-title { font-family: var(--font-heading); font-weight: 600; color: var(--text-primary); font-size: 1.1rem; margin-bottom: 0.25rem; }
+  .funnel-desc { color: var(--text-secondary); font-size: 0.9rem; }
+  .funnel-arrow { text-align: center; color: var(--text-tertiary); margin: 0.25rem 0; font-size: 1.25rem; opacity: 0.5; }
+
+  /* Tab styles */
+  .tab-header { 
+    display: flex; gap: 0.5rem; margin-bottom: 2rem; 
+    background: rgba(0,0,0,0.3); padding: 0.5rem; border-radius: 12px;
+    border: 1px solid var(--glass-border);
+    overflow-x: auto; scrollbar-width: none; 
+  }
+  .tab-btn {
+    background: transparent; border: none; color: var(--text-secondary); font-family: var(--font-heading);
+    font-size: 1rem; font-weight: 500; cursor: pointer; padding: 0.75rem 1.5rem; border-radius: 8px; transition: all 0.2s;
+    white-space: nowrap; flex: 1;
+  }
+  .tab-btn:hover { color: var(--text-primary); background: rgba(255, 255, 255, 0.05); }
+  .tab-btn.active { color: var(--text-primary); background: var(--glass-border); box-shadow: inset 0 1px 0 rgba(255,255,255,0.1); }
+  .tab-content { display: none; animation: fadeIn 0.4s ease-out; }
+  .tab-content.active { display: block; }
+
+  /* Badge */
+  .badge {
+    display: inline-flex; align-items: center; justify-content: center;
+    font-size: 0.75rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em;
+    padding: 0.25rem 0.75rem; border-radius: 999px;
+    background: rgba(59, 130, 246, 0.15); color: var(--accent-blue);
+    border: 1px solid rgba(59, 130, 246, 0.3);
+  }
+
+  /* Animations */
+  @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+  @keyframes fadeInUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+  @keyframes fadeInDown { from { opacity: 0; transform: translateY(-20px); } to { opacity: 1; transform: translateY(0); } }
+  .delay-1 { animation-delay: 0.1s; }
+  .delay-2 { animation-delay: 0.2s; }
+  .delay-3 { animation-delay: 0.3s; }
+  .delay-4 { animation-delay: 0.4s; }
+  
+  @media (max-width: 768px) {
+    h1 { font-size: 2.5rem; }
+    .grid-2, .grid-3 { grid-template-columns: 1fr; }
+    .tab-header { flex-wrap: nowrap; justify-content: flex-start; }
+    .tab-btn { flex: 0 0 auto; }
+  }
+</style>
+</head>
+<body>
+
+<div class="container">
+  <header>
+    <img src="Skybox Logo.webp" alt="Skybox Logo" style="max-height: 80px; margin-bottom: 1.5rem; filter: drop-shadow(0 0 12px rgba(255,255,255,0.2));" />
+    <h1>Live Card Breaking <br/><span class="gradient-text">Director's Playbook</span></h1>
+    <p class="subtitle">Strategy, Production, & Conversion for Elite Streamers</p>
+  </header>
+
+  <!-- INDUSTRY SNAPSHOT -->
+  <section class="section delay-1">
+    <h2 class="section-title"><i class="ti ti-chart-bar"></i> Industry Snapshot (2025)</h2>
+    <div class="grid-4">
+      <div class="glass-card metric-card">
+        <div class="metric-content">
+          <div class="metric-label">Whatnot GMV</div>
+          <div class="metric-value">$6B</div>
+          <div class="metric-sub"><i class="ti ti-trending-up"></i> 2x YoY Growth</div>
+        </div>
+        <div class="metric-hover"><p>Driven by the gamification of shopping, live auctions, and impulse buying from the 18-35 demographic on mobile.</p></div>
+      </div>
+      <div class="glass-card metric-card">
+        <div class="metric-content">
+          <div class="metric-label">Top 25 Breakers' Share</div>
+          <div class="metric-value">71%</div>
+          <div class="metric-sub"><i class="ti ti-crown"></i> Of all buyers</div>
+        </div>
+        <div class="metric-hover"><p>Consolidation is happening fast. Buyers trust established, high-production breakers over small-scale side hustles.</p></div>
+      </div>
+      <div class="glass-card metric-card">
+        <div class="metric-content">
+          <div class="metric-label">Avg. Session Time</div>
+          <div class="metric-value">80m</div>
+          <div class="metric-sub"><i class="ti ti-clock"></i> Exceeds YouTube</div>
+        </div>
+        <div class="metric-hover"><p>Breaks function as background entertainment. Viewers stay to watch the drama unfold and chat with the community.</p></div>
+      </div>
+      <div class="glass-card metric-card">
+        <div class="metric-content">
+          <div class="metric-label">Top Breaker Rev</div>
+          <div class="metric-value">$18M+</div>
+          <div class="metric-sub"><i class="ti ti-cash"></i> Annually</div>
+        </div>
+        <div class="metric-hover"><p>Top-tier operators like Filthbomb run full-time warehouse teams breaking cards 24/7 with massive retail allocations.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- THE FOUNDATION -->
+  <section class="section delay-2">
+    <h2 class="section-title"><i class="ti ti-shield-check"></i> The Foundation: Trust & Production</h2>
+    <div class="grid-2">
+      <div class="glass-card">
+        <div class="card-header">
+          <div class="icon-box icon-purple"><i class="ti ti-lock"></i></div>
+          <h3>Trust is Your Currency</h3>
+        </div>
+        <p>Because the core of breaking is chance, your reputation for absolute fairness is your most valuable asset. One accusation of a "sleight of hand" can ruin a channel.</p>
+        <ul class="custom-list">
+          <li><strong>Full Visibility:</strong> The sealed product, your hands, and the opening process must *never* leave the camera frame.</li>
+          <li><strong>Transparent Randomization:</strong> Always use on-screen, verifiable randomizers (like Random.org) for teams or spots.</li>
+          <li><strong>Clear Rules upfront:</strong> Explain shipping policies, base card distribution, and dispute resolution before taking money.</li>
+        </ul>
+      </div>
+      <div class="glass-card">
+        <div class="card-header">
+          <div class="icon-box icon-blue"><i class="ti ti-video"></i></div>
+          <h3>Professional Setup</h3>
+        </div>
+        <p>You don't need a Hollywood studio, but low production value will immediately turn away high-spending collectors.</p>
+        <ul class="custom-list">
+          <li><strong>Dual Camera Rig:</strong> A 1080p/4K overhead "top-cam" focused tightly on the cards, plus a high-quality face-cam for personal connection.</li>
+          <li><strong>Lighting & Audio:</strong> Soft, diffused ring lights or key lights to minimize glare on glossy cards. A dedicated USB or XLR microphone is non-negotiable—poor audio drives viewers away instantly.</li>
+          <li><strong>Consistent Branding:</strong> Use custom overlay graphics, physical desk mats, and a branded backdrop to look like a legitimate business.</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- THE FUNNEL -->
+  <section class="section delay-3">
+    <h2 class="section-title"><i class="ti ti-filter"></i> The Conversion Funnel</h2>
+    <div class="glass-card">
+      <div class="funnel-container">
+        
+        <div class="funnel-step f-top">
+          <div class="funnel-content">
+            <div class="funnel-title">1. Discovery (Top of Funnel)</div>
+            <div class="funnel-desc">Drive organic reach via 15-30s TikTok/Reels of massive pulls over $500. Publish full VODs on YouTube as an SEO trust signal. Be genuinely helpful in Reddit/Discord hobby forums.</div>
+          </div>
+          <i class="ti ti-brand-tiktok icon-box icon-pink"></i>
+        </div>
+        
+        <div class="funnel-arrow"><i class="ti ti-arrow-down"></i></div>
+        
+        <div class="funnel-step f-mid">
+          <div class="funnel-content">
+            <div class="funnel-title">2. The Lurker (First View)</div>
+            <div class="funnel-desc">Scroll-in viewers decide to stay in 3 seconds. <strong>Never start a stream setting up.</strong> Always be mid-break or running a countdown timer. Have an on-screen graphic showing the value of the box (e.g. "$1,000 Case Break").</div>
+          </div>
+          <i class="ti ti-eye icon-box icon-purple"></i>
+        </div>
+
+        <div class="funnel-arrow"><i class="ti ti-arrow-down"></i></div>
+        
+        <div class="funnel-step f-conv">
+          <div class="funnel-content">
+            <div class="funnel-title">3. Conversion (First Buy)</div>
+            <div class="funnel-desc">Lower the barrier to entry. Offer low-cost "mini-breaks" or flash sale a spot at 20% off for 90 seconds. Call out newcomers by name in chat: <em>"Welcome [username], we're opening Bowman Draft, spots still available."</em></div>
+          </div>
+          <i class="ti ti-shopping-cart icon-box icon-blue"></i>
+        </div>
+
+        <div class="funnel-arrow"><i class="ti ti-arrow-down"></i></div>
+        
+        <div class="funnel-step f-ret">
+          <div class="funnel-content">
+            <div class="funnel-title">4. Retention (Repeat Customer)</div>
+            <div class="funnel-desc">The post-sale experience is the actual product. Ship safely in top-loaders within 48 hours. Include a handwritten thank-you note. Respond to messages immediately. Damaged cards or slow shipping destroy relationships.</div>
+          </div>
+          <i class="ti ti-package icon-box icon-amber"></i>
+        </div>
+
+        <div class="funnel-arrow"><i class="ti ti-arrow-down"></i></div>
+        
+        <div class="funnel-step f-loy">
+          <div class="funnel-content">
+            <div class="funnel-title">5. Loyalty (The Whale)</div>
+            <div class="funnel-desc">Create an exclusive VIP Discord for regulars. Give them early access to high-end breaks, loyalty points, or "buy 10 get 1" perks. Formal recognition on-stream builds an inside culture they don't want to leave.</div>
+          </div>
+          <i class="ti ti-crown icon-box icon-green"></i>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- LIVE ENTERTAINMENT -->
+  <section class="section delay-4">
+    <h2 class="section-title"><i class="ti ti-device-tv"></i> Live Engagement & Entertainment</h2>
+    <div class="grid-3">
+      <div class="glass-card">
+        <div class="card-header">
+          <div class="icon-box icon-pink"><i class="ti ti-mood-smile"></i></div>
+          <h3>Authentic Energy</h3>
+        </div>
+        <p>Your reaction to a big pull IS the content. Viewers watch for vicarious thrills. A flat reveal on a $500 card kills retention. Be loud and excited, but keep it genuine. Don't fake "hype" for a $2 base card.</p>
+      </div>
+      <div class="glass-card">
+        <div class="card-header">
+          <div class="icon-box icon-amber"><i class="ti ti-message-circle"></i></div>
+          <h3>Chat Management</h3>
+        </div>
+        <p>Treat chat like a room full of regulars. Celebrate buyers' hits. Ask questions ("Who do you think will pull the Cam Ward auto?"). Live giveaways require chat inputs, which spikes algorithmic placement.</p>
+      </div>
+      <div class="glass-card">
+        <div class="card-header">
+          <div class="icon-box icon-green"><i class="ti ti-player-play"></i></div>
+          <h3>Pacing & Rhythm</h3>
+        </div>
+        <p>Don't rush the big hits, give each valuable card a moment to breathe on screen. Conversely, don't crawl through bulk base cards. Dead air equals instant viewer drop-off. Keep the rhythm moving.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- THE PERFORMER'S MINDSET -->
+  <section class="section">
+    <h2 class="section-title"><i class="ti ti-camera"></i> The Performer's Mindset: Camera Presence</h2>
+    <p style="margin-bottom: 2rem; max-width: 800px;">Viewers don't just stay for the cards—they stay for <em>you</em>. Host personality is the actual product being sold. A parasocial connection and a feeling of community belonging are what turn a one-time buyer into a repeat customer.</p>
+    
+    <div class="grid-2">
+      <div class="glass-card" style="border-top: 4px solid var(--accent-green);">
+        <div class="card-header">
+          <div class="icon-box icon-green"><i class="ti ti-check"></i></div>
+          <h3>DO: The Professional Standard</h3>
+        </div>
+        <ul class="custom-list">
+          <li><strong>Eye Contact with the Lens:</strong> When speaking directly to the audience, look at the camera lens, not your monitor. It builds a personal connection.</li>
+          <li><strong>Kill "Dead Air":</strong> When prepping packs or waiting for a break to fill, keep talking. Share hobby news, discuss the set's checklist, or tell a story.</li>
+          <li><strong>Maintain the Conversational Zone:</strong> Stay physically present and engaged in the frame. Your body language matters.</li>
+          <li><strong>Authentic Energy:</strong> Celebrate big pulls with calibrated, genuine excitement.</li>
+        </ul>
+      </div>
+
+      <div class="glass-card" style="border-top: 4px solid var(--accent-pink);">
+        <div class="card-header">
+          <div class="icon-box icon-pink"><i class="ti ti-x"></i></div>
+          <h3>DON'T: The Audience Killers</h3>
+        </div>
+        <ul class="custom-list">
+          <li><strong>Don't Leave the Frame:</strong> Getting up, wandering off, or taking phone calls on stream instantly kills viewer retention. Stay at the desk.</li>
+          <li><strong>No Side Conversations:</strong> Having off-camera conversations with friends in the room alienates the digital audience and makes them feel like outsiders.</li>
+          <li><strong>Watch Your Topics:</strong> Avoid politics, controversial subjects, or anything that could make viewers uncomfortable at all costs. It immediately drives the audience away.</li>
+          <li><strong>Don't Fake the Hype:</strong> Screaming over a $5 base card destroys your credibility.</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- STRATEGIES BY PROPERTY -->
+  <section class="section">
+    <h2 class="section-title"><i class="ti ti-cards"></i> Property-Specific Strategies</h2>
+    
+    <div class="tab-header">
+      <button class="tab-btn active" onclick="openTab(event, 'tab-sports')">Sports Cards (NFL/NBA/MLB)</button>
+      <button class="tab-btn" onclick="openTab(event, 'tab-tcg')">TCG (Pokémon, One Piece, MTG)</button>
+      <button class="tab-btn" onclick="openTab(event, 'tab-formats')">General Formats</button>
+    </div>
+
+    <div class="glass-card">
+      <div id="tab-sports" class="tab-content active">
+        <div class="card-header" style="justify-content: space-between;">
+          <h3 style="font-size: 1.5rem;">Sports Card Strategies</h3>
+          <span class="badge">Hype Driven</span>
+        </div>
+        <ul class="custom-list">
+          <li><strong>Release Week is King:</strong> Traffic spikes massively on the release week of flagship products (Topps Series 1, Panini Prizm, Bowman Draft). Breaking stale product from last year yields poor viewership.</li>
+          <li><strong>Rookie Chasing:</strong> Traffic is driven by generational prospects. Title your streams around hunting specific names (e.g., "Hunting Cooper Flagg Autos").</li>
+          <li><strong>PYT Premium:</strong> "Pick Your Team" formats work best here. Premium teams with the best rookies (e.g., Yankees, Lakers) can be priced 2-3x higher than basement teams, allowing you to subsidize the break cost.</li>
+        </ul>
+      </div>
+
+      <div id="tab-tcg" class="tab-content">
+        <div class="card-header" style="justify-content: space-between;">
+          <h3 style="font-size: 1.5rem;">TCG Strategies</h3>
+          <span class="badge">Art & Meta Driven</span>
+        </div>
+        <ul class="custom-list">
+          <li><strong>Nostalgia & Alternate Arts:</strong> TCG collectors chase specific illustrators, alternate full-art cards, or "Manga Rares" (One Piece). Know the visual hierarchy of the sets.</li>
+          <li><strong>Bounty Breaks:</strong> Highly effective in TCGs. Place a cash or store-credit bounty on a specific elusive chase card (e.g., "$100 Bounty if we hit the Giratina V Alt Art"). It drives pre-break sales.</li>
+          <li><strong>Hits vs. Bulk:</strong> Because TCGs have massive amounts of bulk (common cards), explicitly state whether you ship "Hits Only" or "All Cards" to avoid massive shipping costs and angry buyers.</li>
+        </ul>
+      </div>
+
+      <div id="tab-formats" class="tab-content">
+        <div class="card-header" style="justify-content: space-between;">
+          <h3 style="font-size: 1.5rem;">Standard Break Formats</h3>
+          <span class="badge">Operations</span>
+        </div>
+        <ul class="custom-list">
+          <li><strong>Random / Snake Draft:</strong> The most common format. Spots are sold uniformly, and teams/elements are assigned via an on-stream randomizer wheel. Creates real-time drama.</li>
+          <li><strong>Personals (Rip & Ship):</strong> A buyer purchases an entire box opened live just for them. High-ticket, high-trust. Great upsell once you establish repeat customers.</li>
+          <li><strong>Mixers:</strong> Multiple different products combined into one mega-break for a deeper chase. Higher buy-in per spot, but drives the most stream traffic due to the massive potential prize pool.</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+</div>
+
+<script>
+  function openTab(evt, tabName) {
+    // Hide all tab content
+    var i, tabcontent, tablinks;
+    tabcontent = document.getElementsByClassName("tab-content");
+    for (i = 0; i < tabcontent.length; i++) {
+      tabcontent[i].classList.remove("active");
+    }
+    
+    // Remove active class from all buttons
+    tablinks = document.getElementsByClassName("tab-btn");
+    for (i = 0; i < tablinks.length; i++) {
+      tablinks[i].classList.remove("active");
+    }
+    
+    // Show current tab, and add active class to button
+    document.getElementById(tabName).classList.add("active");
+    evt.currentTarget.classList.add("active");
+  }
+</script>
+
+</body>
+</html>
